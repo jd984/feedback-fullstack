@@ -1,0 +1,76 @@
+"use client";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
+import axios from "axios";
+import { ApiResponse } from "@/types/ApiResponse";
+import { useToast } from "./ui/use-toast";
+
+type MessageCardProps = {
+  key: any;
+  message: any;
+  onMessageDelete: (messageId: string) => void;
+};
+
+const MessageCard = ({ message, onMessageDelete, key }: any) => {
+  const { toast } = useToast();
+  const handleDeleteConfirm = async () => {
+    const response = await axios.delete<ApiResponse>(
+      `/api/delete-message/${message}`
+    );
+    if (response.data.success) {
+      toast({
+        title: response.data.message,
+      });
+      onMessageDelete(message);
+    }
+  };
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Card Title</CardTitle>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive">
+              <X className="h-5 w-5" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteConfirm}>
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        <CardDescription>Card Description</CardDescription>
+      </CardHeader>
+    </Card>
+  );
+};
+
+export default MessageCard;

@@ -52,7 +52,7 @@ export async function POST(request: Request) {
           success: true,
           message: "Account verified successfully",
         },
-        { status: 200 }
+        { status: 201 }
       );
     } else if (!isCodeNotExpired) {
       return Response.json(
