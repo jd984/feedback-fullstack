@@ -22,7 +22,7 @@ const page = () => {
   const { toast } = useToast();
   const { data: session } = useSession();
 
-  const handleDeleteMessage = (messageId: string) => {
+  const handleDeleteMessage = (messageId: any) => {
     setMessage(message.filter((msg) => msg._id !== messageId));
   };
 
@@ -38,8 +38,9 @@ const page = () => {
     setIsSwitchLoading(true);
     try {
       const response = await axios.get<ApiResponse>("/api/accept-message");
-      if (response.data.success) {
-        setValue("acceptMessage", response.data.isAcceptingMessage);
+      console.log("first", response);
+      if (response?.status === 200) {
+        setValue("acceptMessage", response.data.isAcceptingMessages);
       }
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
@@ -61,7 +62,7 @@ const page = () => {
       setIsSwitchLoading(true);
       try {
         const response = await axios.get<ApiResponse>("/api/get-messages");
-        if (response.data.success) {
+        if (response.status === 200) {
           setMessage(response.data.messages || []);
           if (refresh) {
             toast({
@@ -176,7 +177,7 @@ const page = () => {
         {message.length > 0 ? (
           message.map((message, index) => (
             <MessageCard
-              key={message._id}
+              key={message._id ?? 0}
               message={message}
               onMessageDelete={handleDeleteMessage}
             />
